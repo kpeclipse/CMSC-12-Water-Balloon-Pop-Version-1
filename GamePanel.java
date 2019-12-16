@@ -31,6 +31,7 @@ public class GamePanel extends JFrame implements KeyListener
 	private String scoreTemp, dodgedBalloonsTemp, line;
 	private boolean flag1=true, flag2=true, flag3=true, flag4=true, flag5=true;
 	private boolean hold=false, gameOver=false, over=false, again=false;
+	private boolean enabledMusic, enabledSfx;
 	private Random r = new Random();
 
 	private UmbrellaClose uc;
@@ -40,15 +41,19 @@ public class GamePanel extends JFrame implements KeyListener
 	private Fall4 fall4;
 	private Fall5 fall5;
 
-	private GameMainClass game;
+	private WaterBalloonPop game;
 	private NewHighScore newHighScore;
 	private HighScore prevHScore;
-	private SoundClip sound = new SoundClip("travel.wav", 0);
-	private SoundClip soundcry = new SoundClip("Crycry.wav", 1);
-	private SoundClip[] soundpop = new SoundClip[5];
+	private SoundClip sound, soundcry;
+	private SoundClip[] soundpop;
 
-	public GamePanel()
+	public GamePanel(boolean music)
 	{
+		enabledMusic = music;
+
+		soundcry = new SoundClip("Crycry.wav", 1);
+		soundpop = new SoundClip[5];
+
 		setSize(1200,725);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,10 +70,6 @@ public class GamePanel extends JFrame implements KeyListener
 			panel.setBounds(0, 0, 1200, 725);
 			panel.setLayout(null);
 			panel.setOpaque(false);
-
-			JPanel blocks = new JPanel();
-			blocks.setBackground(Color.BLUE);
-			blocks.setBounds(50,200,780,50);
 
 			scorePanel = new JPanel();
 			scorePanel.setBounds(885, 200, 265, 75);
@@ -166,7 +167,9 @@ public class GamePanel extends JFrame implements KeyListener
 
 			for(int i=0; i<5; i++)
 			{
-				soundpop[i] = new SoundClip("pop.wav", 1);
+				if(enabledSfx==true){
+					soundpop[i] = new SoundClip("pop.wav", 1);
+				}
 			}	
 				
 			for(int i=0; i<6; i++)
@@ -185,7 +188,6 @@ public class GamePanel extends JFrame implements KeyListener
 			}
 
 			panel.add(villain1);
-			add(blocks);
 			add(gameOverPanel);
 			add(choicePanel);
 			add(scorePanel);
@@ -237,7 +239,10 @@ public class GamePanel extends JFrame implements KeyListener
 
 	public void Start()
 	{
-		sound.start();
+		if(enabledMusic == true){
+			sound = new SoundClip("travel.wav", 0);
+			sound.start();
+		}
 
 		TimerTask task = new TimerTask()
 		{
@@ -273,12 +278,25 @@ public class GamePanel extends JFrame implements KeyListener
 
 					if(again==true)
 					{
-						dispose();
-						sound.stop();
+						switch(Boolean.toString(enabledMusic))
+						{
+							case "true":{
+								sound.stop();
+								dispose();
+								GamePanel again = new GamePanel(true);
+								again.enabledMusic = true;
+								break;
+							}
+
+							case "false":{
+								dispose();
+								GamePanel again = new GamePanel(false);
+								again.enabledMusic = false;
+								break;
+							}
+						}
 
 						newHighScore = new NewHighScore(highScore);
-
-						new GamePanel();
 						cancel();
 					}
 				}
@@ -294,12 +312,17 @@ public class GamePanel extends JFrame implements KeyListener
 
 	public void End()
 	{
+		if(enabledMusic==true){
+			sound.stop();
+			game = new WaterBalloonPop();
+		//	game.mainClass.enabledMusic = true;
+		}
+		else if(enabledMusic==false){
+			game = new WaterBalloonPop();
+			game.hey();	
+		}
 		dispose();
-		sound.stop();
-
 		newHighScore = new NewHighScore(highScore);
-
-		game = new GameMainClass();
 	}
 
 	public void BeforeFall1()
@@ -600,8 +623,12 @@ public class GamePanel extends JFrame implements KeyListener
 						if(dodgedBalloons>5)
 						{
 							gameOver=true;
-							sound.stop();
-							soundcry.start();
+							if(enabledMusic==true){
+								sound.stop();
+							}
+							if(enabledSfx==true){
+								soundcry.start();
+							}
 
 							player1.setVisible(false);
 							player2.setVisible(false);
@@ -686,8 +713,12 @@ public class GamePanel extends JFrame implements KeyListener
 						if(dodgedBalloons>5)
 						{
 							gameOver=true;
-							sound.stop();
-							soundcry.start();
+							if(enabledMusic==true){
+								sound.stop();
+							}
+							if(enabledSfx==true){
+								soundcry.start();
+							}
 
 							player1.setVisible(false);
 							player2.setVisible(false);
@@ -781,8 +812,12 @@ public class GamePanel extends JFrame implements KeyListener
 						if(dodgedBalloons>5)
 						{
 							gameOver=true;
-							sound.stop();
-							soundcry.start();
+							if(enabledMusic==true){
+								sound.stop();
+							}
+							if(enabledSfx==true){
+								soundcry.start();
+							}
 
 							player1.setVisible(false);
 							player2.setVisible(false);
@@ -889,8 +924,12 @@ public class GamePanel extends JFrame implements KeyListener
 						if(dodgedBalloons>5)
 						{
 							gameOver=true;
-							sound.stop();
-							soundcry.start();
+							if(enabledMusic==true){
+								sound.stop();
+							}
+							if(enabledSfx==true){
+								soundcry.start();
+							}
 
 							player1.setVisible(false);
 							player2.setVisible(false);
@@ -999,8 +1038,12 @@ public class GamePanel extends JFrame implements KeyListener
 						if(dodgedBalloons>5)
 						{
 							gameOver=true;
-							sound.stop();
-							soundcry.start();
+							if(enabledMusic==true){
+								sound.stop();
+							}
+							if(enabledSfx==true){
+								soundcry.start();
+							}
 
 							player1.setVisible(false);
 							player2.setVisible(false);
@@ -1056,9 +1099,13 @@ public class GamePanel extends JFrame implements KeyListener
 				player2.setVisible(false);
 				player3.setVisible(true);
 
-				sound.stop();
-				soundpop[0].start();
-				soundcry.start();
+				if(enabledMusic == true){
+					sound.stop();
+				}
+				/*if(enabledSfx==true){
+					soundpop[0].start();
+					soundcry.start();
+				}*/
 
 				gameOverPanel.setVisible(true);
 				choicePanel.setVisible(true);
@@ -1093,10 +1140,14 @@ public class GamePanel extends JFrame implements KeyListener
 				{
 					try
 					{
-						soundpop[0].start();
+						if(enabledSfx==true){
+							soundpop[0].start();
+						}
 						Thread.sleep(250);
 						balloon[3].setVisible(false);
-						soundpop[0].stop();
+						if(enabledSfx==true){
+							soundpop[0].stop();
+						}
 						b1=0;
 						popped=true;
 					}catch(Exception ex){
@@ -1129,9 +1180,13 @@ public class GamePanel extends JFrame implements KeyListener
 				player2.setVisible(false);
 				player3.setVisible(true);
 
-				sound.stop();
-				soundpop[1].start();
-				soundcry.start();
+				if(enabledMusic==true){
+					sound.stop();
+				}
+				if(enabledSfx==true){
+					soundpop[1].start();
+					soundcry.start();
+				}
 
 				gameOverPanel.setVisible(true);
 				choicePanel.setVisible(true);
@@ -1165,10 +1220,14 @@ public class GamePanel extends JFrame implements KeyListener
 				{
 					try
 					{
-						soundpop[1].start();
+						if(enabledSfx==true){
+							soundpop[1].start();
+						}
 						Thread.sleep(250);
 						balloon[4].setVisible(false);
-						soundpop[1].pause();
+						if(enabledSfx==true){
+							soundpop[1].pause();
+						}
 						b2=0;
 						popped=true;
 					}catch(Exception ex){
@@ -1201,9 +1260,13 @@ public class GamePanel extends JFrame implements KeyListener
 				player2.setVisible(false);
 				player3.setVisible(true);
 
-				sound.stop();
-				soundpop[2].start();
-				soundcry.start();
+				if(enabledMusic==true){
+					sound.stop();
+				}
+				if(enabledSfx==true){
+					soundpop[2].start();
+					soundcry.start();
+				}
 
 				gameOverPanel.setVisible(true);
 				choicePanel.setVisible(true);
@@ -1235,10 +1298,14 @@ public class GamePanel extends JFrame implements KeyListener
 				{
 					try
 					{
-						soundpop[2].start();
+						if(enabledSfx==true){
+							soundpop[2].start();
+						}
 						Thread.sleep(250);
 						balloon[5].setVisible(false);
-						soundpop[2].pause();
+						if(enabledSfx==true){
+							soundpop[2].pause();
+						}
 						b3=0;
 
 						popped=true;
@@ -1272,9 +1339,13 @@ public class GamePanel extends JFrame implements KeyListener
 				player2.setVisible(false);
 				player3.setVisible(true);
 
-				sound.stop();
-				soundpop[3].start();
-				soundcry.start();
+				if(enabledMusic==true){
+					sound.stop();
+				}
+				if(enabledSfx=true){
+					soundpop[3].start();
+					soundcry.start();
+				}
 
 				gameOverPanel.setVisible(true);
 				choicePanel.setVisible(true);
@@ -1308,10 +1379,14 @@ public class GamePanel extends JFrame implements KeyListener
 				{
 					try
 					{
-						soundpop[3].start();
+						if(enabledSfx==true){
+							soundpop[3].start();
+						}
 						Thread.sleep(250);
 						balloonSet1[color1+3].setVisible(false);
-						soundpop[3].pause();
+						if(enabledSfx==true){
+							soundpop[3].pause();
+						}
 						b4=0;
 
 						popped=true;
@@ -1345,9 +1420,13 @@ public class GamePanel extends JFrame implements KeyListener
 				player2.setVisible(false);
 				player3.setVisible(true);
 
-				sound.stop();
-				soundpop[4].start();
-				soundcry.start();
+				if(enabledMusic==true){
+					sound.stop();
+				}
+				if(enabledSfx==true){
+					soundpop[4].start();
+					soundcry.start();
+				}
 
 				gameOverPanel.setVisible(true);
 				choicePanel.setVisible(true);
@@ -1381,10 +1460,14 @@ public class GamePanel extends JFrame implements KeyListener
 				{
 					try
 					{
-						soundpop[4].start();
+						if(enabledSfx==true){
+							soundpop[4].start();
+						}
 						Thread.sleep(250);
 						balloonSet2[color2+3].setVisible(false);
-						soundpop[4].pause();
+						if(enabledSfx==true){
+							soundpop[4].pause();
+						}
 						b5=0;
 
 						popped=true;

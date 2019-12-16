@@ -22,7 +22,8 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 	public GameImagePanel mainbg;
 	public JPanel mainPanel;
 	public JPanel menuPanelForPlay, mainMenuPanel, highscorePanel;
-	private JButton howToPlay, credits, exit, back, yes, no, music, sfx;
+	private JButton howToPlay, credits, exit, back, yes, no;
+	protected JButton music, sfx;
 	public SoundClip sound = new SoundClip("uku.wav", 0);
 	private HighScore newHighScore;
 	private JLabel highscoreLabel;
@@ -34,6 +35,9 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 	private ImageIcon back1, back2;
 	private ImageIcon yes1, yes2;
 	private ImageIcon no1, no2;
+	protected ImageIcon music1, music2, music3, music4;
+	protected ImageIcon sfx1, sfx2, sfx3, sfx4;
+	protected boolean enabledMusic = true;
 
 	public JButton button(JButton theButton, ImageIcon icon)
 	{
@@ -149,6 +153,60 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 	
 	highscorePanel.add(highscoreLabel);
 
+	music = new JButton();
+	music1 = new ImageIcon("music1.png");
+	music3 = new ImageIcon("music3.png");
+	music.setBounds(1000,600,80,80);
+	music.setContentAreaFilled(false);
+	music.setFocusPainted(false);
+	music.setBorder(BorderFactory.createEmptyBorder());
+	
+	if(enabledMusic == true)
+		music.setIcon(music1);
+	else music.setIcon(music3);
+	
+	music.addMouseListener(this);
+	music.addActionListener(new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent event)
+		{
+			if(music.getIcon() == music2)
+			{
+				sound.stop();
+				music.setIcon(music3);
+				enabledMusic = false;
+			}
+			if(music.getIcon() == music4)
+			{
+				sound.start();
+				music.setIcon(music1);
+				enabledMusic = true;
+			}
+	}
+	});
+
+	sfx = new JButton();
+	sfx1 = new ImageIcon("sfx1.png");
+	sfx3 = new ImageIcon("sfx3.png");
+	sfx.setBounds(1090,600,80,80);
+	sfx.setContentAreaFilled(false);
+	sfx.setIcon(sfx1);
+	sfx.setFocusPainted(false);
+	sfx.setBorder(BorderFactory.createEmptyBorder());	
+	sfx.addMouseListener(this);
+	sfx.addActionListener(new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent event)
+		{
+			if(sfx.getIcon() == sfx2)
+				sfx.setIcon(sfx3);
+			if(sfx.getIcon() == sfx4)
+				sfx.setIcon(sfx1);
+		}
+	});
+
 	back.addActionListener(this);
 	back.addMouseListener(this);
 
@@ -169,13 +227,16 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 
 	mainMenuPanel.add(howToPlay);
 	mainMenuPanel.add(credits);
-	mainMenuPanel.add(exit);	
+	mainMenuPanel.add(exit);
+	mainPanel.add(music);
+	mainPanel.add(sfx);	
 
 	mainPanel.setVisible(true);
 
-	setVisible(true);	
-	sound.start();
-	}
+	if(enabledMusic == true)
+		sound.start();
+	setVisible(true);
+}
 
 	@Override
 	public void mouseEntered(MouseEvent e)
@@ -215,6 +276,30 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 			no2 = new ImageIcon("no2.png");
 			no.setIcon(no2);
 		}
+
+		if(e.getComponent() == music && music.getIcon() == music1)
+		{
+			music2 = new ImageIcon("music2.png");
+			music.setIcon(music2);
+		}
+
+		if(e.getComponent() == music && music.getIcon() == music3)
+		{
+			music4 = new ImageIcon("music4.png");
+			music.setIcon(music4);
+		}
+
+		if(e.getComponent() == sfx && sfx.getIcon() == sfx1)
+		{
+			sfx2 = new ImageIcon("sfx2.png");
+			sfx.setIcon(sfx2);
+		}
+
+		if(e.getComponent() == sfx && sfx.getIcon() == sfx3)
+		{
+			sfx4 = new ImageIcon("sfx4.png");
+			sfx.setIcon(sfx4);
+		}
 	}
 
 	public void mouseExited(MouseEvent exited)
@@ -225,6 +310,14 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 		back.setIcon(back1);
 		yes.setIcon(yes1);
 		no.setIcon(no1);
+		if(music.getIcon() == music2)
+			music.setIcon(music1);
+		if(music.getIcon() == music4)
+			music.setIcon(music3);
+		if(sfx.getIcon() == sfx2)
+			sfx.setIcon(sfx1);
+		if(sfx.getIcon() == sfx4)
+			sfx.setIcon(sfx3);
 	}
 
 	public void mouseReleased(MouseEvent e)
@@ -250,6 +343,7 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 			remove(mainMenuPanel);
 			remove(menuPanelForPlay);
 			remove(highscorePanel);
+			remove(mainPanel);
 			add(back);
 			add(howbg);
 			repaint();
@@ -261,6 +355,7 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 			remove(menuPanelForPlay);
 			remove(highscorePanel);
 			remove(mainbg);
+			remove(mainPanel);
 			add(back);
 			add(creditsbg);
 			repaint();
@@ -272,17 +367,20 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 			remove(menuPanelForPlay);
 			remove(highscorePanel);
 			remove(mainbg);
+			remove(mainPanel);
 			add(yes);
 			add(no);
 			add(exitbg);
 			repaint();
 		}
+
 			
 		else if(event.getSource() == back)
 		{
 			remove(back);
 			remove(howbg);
 			remove(creditsbg);
+			add(mainPanel);
 			add(mainMenuPanel);
 			add(menuPanelForPlay);
 			add(highscorePanel);
@@ -295,6 +393,7 @@ public class MajorPanel extends JPanel implements ActionListener, MouseListener
 			remove(yes);
 			remove(no);
 			remove(exitbg);
+			add(mainPanel);
 			add(mainMenuPanel);
 			add(menuPanelForPlay);
 			add(highscorePanel);
