@@ -19,24 +19,25 @@ public class GamePanel extends JFrame implements KeyListener
 	private GameImagePanel background;
 	private JPanel panel, scorePanel, highScorePanel, dodgedBalloonsPanel, gameOverPanel, choicePanel;
 
-	private JLabel player1, player2, player3, player4;
-	private JLabel villain1, villain2;
+	private JLabel villain;
 	private JLabel scoreLabel, highScoreLabel, dodgedBalloonsLabel, gameOverLabel, exitLabel, againLabel;
+	private JLabel[] player = new JLabel[4];
 	private JLabel[] balloon = new JLabel[6];
-	private JLabel[] balloonSet1 = new JLabel[6], balloonSet2 = new JLabel[6];
 
-	private int x=350, b1, b2, b3, b4, b5, n1, n2, n3, n4, n5, c1=0, c2=0, c3=0, c4=0, c5=0, score, highScore;
-	private int y, add1, add2, time1=9, time2=7, color1, color2, interval1, interval2, interval3, dodgedBalloons=0;
-	private int position[] = {146, 296, 468, 596, 746};
+	private int x = 400, freeFall = 180, index, c = 0, score, highScore, time = 1;
+	private int forVillain, forBalloon, villainX, balloonX;
+	private int y, add1, add2, time1 = 9, color1, color2, interval1, interval2, interval3, dodgedBalloons=0;
+	private int position[] = {146, 321, 496, 671}, position1[] = {70, 245, 420, 595};
+	private int v, vballoonX, vballoonY = 175;
 	private String scoreTemp, dodgedBalloonsTemp, line;
-	private boolean flag1=true, flag2=true, flag3=true, flag4=true, flag5=true;
-	private boolean hold=false, gameOver=false, over=false, again=false;
+	private boolean flag1 = true, flag2 = true, flag3 = true;
+	private boolean hold = false, gameOver = false, over = false, again = false, firstDrop = true;
 	private Random r = new Random();
 
 	private UmbrellaClose uc;
 	private Fall fall;
 
-	private GameMainClass game;
+	private WaterBalloonPop game;
 	private NewHighScore newHighScore;
 	private HighScore prevHScore;
 	private SoundClip sound = new SoundClip("travel.wav", 0);
@@ -122,20 +123,19 @@ public class GamePanel extends JFrame implements KeyListener
 			exitLabel.setForeground(Color.WHITE);
 			exitLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-			player1 = new JLabel(new ImageIcon ("CLOSE.png"));
-			player1.setBounds(x, 444, 254, 254);
+			player[0] = new JLabel(new ImageIcon ("CLOSE.png"));
+			player[0].setBounds(x, 435, 254, 254);
 
-			player2 = new JLabel(new ImageIcon ("OPEN.png"));
-			player2.setBounds(x, 444, 254, 254);
+			player[1] = new JLabel(new ImageIcon ("OPEN.png"));
+			player[1].setBounds(x, 435, 254, 254);
 
-			player3 = new JLabel(new ImageIcon ("WET.png"));
-			player3.setBounds(x, 444, 254, 254);
+			player[2] = new JLabel(new ImageIcon ("WET.png"));
+			player[2].setBounds(x, 435, 254, 254);
 
-			player4 = new JLabel(new ImageIcon ("CRY.png"));
-			player4.setBounds(x, 444, 254, 254);
+			player[3] = new JLabel(new ImageIcon ("CRY.png"));
+			player[3].setBounds(x, 435, 254, 254);
 
-			villain1 = new JLabel(new ImageIcon ("VILLAIN.png"));
-			villain1.setBounds(680,10,200,200);
+			villain = new JLabel(new ImageIcon ("VILLAIN.png"));
 			
 			balloon[0] = new JLabel(new ImageIcon ("RED BALLOON.png"));
 			balloon[1] = new JLabel(new ImageIcon ("SHINY BALLOON.png"));
@@ -143,35 +143,11 @@ public class GamePanel extends JFrame implements KeyListener
 			balloon[3] = new JLabel(new ImageIcon ("Red Pop.png"));
 			balloon[4] = new JLabel(new ImageIcon ("Shiny Pop.png"));
 			balloon[5] = new JLabel(new ImageIcon ("Black Pop.png"));
-			balloonSet1[0] = new JLabel(new ImageIcon ("RED BALLOON.png"));
-			balloonSet2[0] = new JLabel(new ImageIcon ("RED BALLOON.png"));
-			balloonSet1[1] = new JLabel(new ImageIcon ("BLACK BALLOON.png"));
-			balloonSet2[1] = new JLabel(new ImageIcon ("BLACK BALLOON.png"));
-			balloonSet1[2] = new JLabel(new ImageIcon ("SHINY BALLOON.png"));
-			balloonSet2[2] = new JLabel(new ImageIcon ("SHINY BALLOON.png"));
-			balloonSet1[3] = new JLabel(new ImageIcon ("Red Pop.png"));
-			balloonSet2[3] = new JLabel(new ImageIcon ("Red Pop.png"));
-			balloonSet1[4] = new JLabel(new ImageIcon ("Black Pop.png"));
-			balloonSet2[4] = new JLabel(new ImageIcon ("Black Pop.png"));
-			balloonSet1[5] = new JLabel(new ImageIcon ("Shiny Pop.png"));
-			balloonSet2[5] = new JLabel(new ImageIcon ("Shiny Pop.png"));
-				
+
 			for(int i=0; i<6; i++)
-			{
 				panel.add(balloon[i]);
-			}
 
-			for(int i=0; i<6; i++)
-			{
-				panel.add(balloonSet1[i]);
-			}
-
-			for(int i=0; i<6; i++)
-			{
-				panel.add(balloonSet2[i]);
-			}
-
-			panel.add(villain1);
+			panel.add(villain);
 			add(gameOverPanel);
 			add(choicePanel);
 			add(scorePanel);
@@ -179,11 +155,10 @@ public class GamePanel extends JFrame implements KeyListener
 			add(dodgedBalloonsPanel);
 			add(background);
 
-
-			panel.add(player1);
-			panel.add(player2);
-			panel.add(player3);
-			panel.add(player4);
+			panel.add(player[0]);
+			panel.add(player[1]);
+			panel.add(player[2]);
+			panel.add(player[3]);
 			highScorePanel.add(highScoreLabel);
 			scorePanel.add(scoreLabel);
 			dodgedBalloonsPanel.add(dodgedBalloonsLabel);
@@ -192,18 +167,12 @@ public class GamePanel extends JFrame implements KeyListener
 			choicePanel.add(exitLabel);
 			addKeyListener(this);
 
-			player2.setVisible(false);
-			player3.setVisible(false);
-			player4.setVisible(false);
+			player[1].setVisible(false);
+			player[2].setVisible(false);
+			player[3].setVisible(false);
 			balloon[3].setVisible(false);
 			balloon[4].setVisible(false);
 			balloon[5].setVisible(false);
-			balloonSet1[3].setVisible(false);
-			balloonSet1[4].setVisible(false);
-			balloonSet1[5].setVisible(false);
-			balloonSet2[3].setVisible(false);
-			balloonSet2[4].setVisible(false);
-			balloonSet2[5].setVisible(false);
 			gameOverPanel.setVisible(false);
 			choicePanel.setVisible(false);
 
@@ -214,9 +183,7 @@ public class GamePanel extends JFrame implements KeyListener
 
 			setVisible(true);
 			
-		}catch(IOException ioException){
-			System.err.println("IOException occured!");
-		}
+		}catch(IOException ioException){System.err.println("IOException occured!");}
 
 		Start();
 	}
@@ -229,27 +196,29 @@ public class GamePanel extends JFrame implements KeyListener
 		{
 			public void run()
 			{
-				BeforeFall(1);
-
-				if(y>=10)
+				if(gameOver == false)
 				{
-					BeforeFall(2);
+					if(y < 10)
+					BeforeFall(1);
+
+					else if(y >= 10)
+						BeforeFall(2);
+	
+					else if(y >= 20)
+					{
+						BeforeFall(3);
+
+						try{
+							BeforeFall(4);
+
+							Thread.sleep(250);
+
+							BeforeFall(5);
+						}catch(Exception e){e.printStackTrace();}
+					}
 				}
 
-				if(y>=20)
-				{
-					BeforeFall(3);
-
-					try{
-						BeforeFall(4);
-
-						Thread.sleep(1000);
-
-						BeforeFall(5);
-					}catch(Exception e){e.printStackTrace();}
-				}
-
-				if(gameOver==true)
+				else
 				{
 					if(over==true)
 					{
@@ -273,9 +242,10 @@ public class GamePanel extends JFrame implements KeyListener
 
 		Timer timer = new Timer("Timer");
 
-		long delay = 1000L;
-		long period = 1000L;
+		long delay = 100L;
+		long period = 10L;
 		timer.scheduleAtFixedRate(task, delay, period);
+
 	}
 
 	public void End()
@@ -285,95 +255,39 @@ public class GamePanel extends JFrame implements KeyListener
 
 		newHighScore = new NewHighScore(highScore);
 
-		game = new GameMainClass();
+		game = new WaterBalloonPop();
 	}
 
 	public void BeforeFall(int number)
 	{
 		try{
 			setVisible(true);
-			switch (number){
+			switch(number){
 				case 1:
-					n1 = r.nextInt(5);
-					interval1 = r.nextInt(1500)+2500;
-
+				{
+					if(firstDrop == true)
+					index = r.nextInt(4);
+					System.out.println("First Drop is at Column " + (index + 1));
 					fall = new Fall();
 					fall.start(1);
-
-					Thread.sleep(interval1);
-
-					if(c1==4 && time1>5)
-					{
-						time1--;
-						c1=0;
-					}
-
-					while(interval1 >100)
-						interval1-=300;
-
-					flag1=true;
 					break;
+				}
+
 				case 2:
-					add1=1000;
-
-					n2 = r.nextInt(5);
-					interval2 = r.nextInt(1500) + add1;
-
+				{
 					fall = new Fall();
 					fall.start(2);
-
-					Thread.sleep(interval2);
-
-					if(c2==4 && time2>5)
-					{
-						time2--;
-						c2=0;
-					}
-
-					while(interval2 >100)
-					{
-						interval2-=300;
-						add1-=200;
-					}
-
-					flag2=true;
-					break;
-				case 3:
-					add2 = 275;
-					interval3 = r.nextInt(200)+add2;
-
-					n3 = r.nextInt(5);
-
-					fall = new Fall();
-					fall.start(3);
-
-					Thread.sleep(325);
-
-					flag3=true;
-					break;
-				case 4:
-					n4 = r.nextInt(3) + 1;
-					color1 = r.nextInt(2);
-
-					fall = new Fall();
-					fall.start(4);
-
-					Thread.sleep(500);
-
-					flag4=true;
-					break;
-				case 5:
-					n5 = r.nextInt(3) + 1;
-					color2 = r.nextInt(2);
-
-					fall = new Fall();
-					fall.start(5);
-
-					Thread.sleep(500);
-
-					flag5=true;
-					break;
+				}
 			}
+
+			Thread.sleep(250);
+
+			if(c == 4)
+				c=0;
+
+				flag1=true;
+
+				flag2=true;
 		}catch(Exception e){e.printStackTrace();}
 	}
 
@@ -381,33 +295,33 @@ public class GamePanel extends JFrame implements KeyListener
 	public void keyPressed(KeyEvent e)
 	{
 		int key = e.getKeyCode();
-		int move = 150;
+		int move = 175;
 
 		if(key == KeyEvent.VK_LEFT && gameOver==false)
 		{
 			while(hold==false)
 			{
 				x -= move;
-				player4.setVisible(false);
-				player3.setVisible(false);
-				player2.setVisible(false);
-				player1.setVisible(true);
+				player[3].setVisible(false);
+				player[2].setVisible(false);
+				player[1].setVisible(false);
+				player[0].setVisible(true);
 
 				if(x<0)
 				{
 					x+= move;
-					player1.setBounds(x, 444, 254, 254);
-					player2.setBounds(x, 444, 254, 254);
-					player3.setBounds(x, 444, 254, 254);
-					player4.setBounds(x, 444, 254, 254);
+					player[0].setBounds(x, 435, 254, 254);
+					player[1].setBounds(x, 435, 254, 254);
+					player[2].setBounds(x, 435, 254, 254);
+					player[3].setBounds(x, 435, 254, 254);
 				}
 
 				else
 				{
-					player1.setBounds(x, 444, 254, 254);
-					player2.setBounds(x, 444, 254, 254);
-					player3.setBounds(x, 444, 254, 254);
-					player4.setBounds(x, 444, 254, 254);
+					player[0].setBounds(x, 435, 254, 254);
+					player[1].setBounds(x, 435, 254, 254);
+					player[2].setBounds(x, 435, 254, 254);
+					player[3].setBounds(x, 435, 254, 254);
 				}
 				hold = true;
 			}
@@ -418,26 +332,26 @@ public class GamePanel extends JFrame implements KeyListener
 			while(hold==false)
 			{
 				x += move;
-				player4.setVisible(false);
-				player3.setVisible(false);
-				player2.setVisible(false);
-				player1.setVisible(true);
+				player[3].setVisible(false);
+				player[2].setVisible(false);
+				player[1].setVisible(false);
+				player[0].setVisible(true);
 
-				if(x>750)
+				if(x>700)
 				{
 					x-= move;
-					player1.setBounds(x, 444, 254, 254);
-					player2.setBounds(x, 444, 254, 254);
-					player3.setBounds(x, 444, 254, 254);
-					player4.setBounds(x, 444, 254, 254);
+					player[0].setBounds(x, 435, 254, 254);
+					player[1].setBounds(x, 435, 254, 254);
+					player[2].setBounds(x, 435, 254, 254);
+					player[3].setBounds(x, 435, 254, 254);
 				}
 
 				else
 				{
-					player1.setBounds(x, 444, 254, 254);
-					player2.setBounds(x, 444, 254, 254);
-					player3.setBounds(x, 444, 254, 254);
-					player4.setBounds(x, 444, 254, 254);
+					player[0].setBounds(x, 435, 254, 254);
+					player[1].setBounds(x, 435, 254, 254);
+					player[2].setBounds(x, 435, 254, 254);
+					player[3].setBounds(x, 435, 254, 254);
 				}
 				hold=true;
 			}
@@ -448,10 +362,10 @@ public class GamePanel extends JFrame implements KeyListener
 		{
 			while(hold==false)
 			{
-				player1.setVisible(false);
-				player3.setVisible(false);
-				player4.setVisible(false);
-				player2.setVisible(true);
+				player[0].setVisible(false);
+				player[2].setVisible(false);
+				player[3].setVisible(false);
+				player[1].setVisible(true);
 
 				uc = new UmbrellaClose();
 				uc.start();
@@ -496,8 +410,8 @@ public class GamePanel extends JFrame implements KeyListener
 				try
 				{
 					Thread.sleep(125);
-					player2.setVisible(false);
-					player1.setVisible(true);
+					player[1].setVisible(false);
+					player[0].setVisible(true);
 					running=true;
 				}catch(Exception ex){
 					ex.printStackTrace();
@@ -512,29 +426,45 @@ public class GamePanel extends JFrame implements KeyListener
 		{
 			switch (number){
 				case 1:
+					System.out.println("balloon is RED");
 					while(flag1==true && gameOver==false)
 					{
 						try
 						{
 							balloon[0].setVisible(true);
 
-							balloon[0].setBounds(position[n1], b1, 61, 90);
-							balloon[3].setBounds(position[n1], b1, 61, 90);
+							if(firstDrop == true)
+							{
+								balloonX = position[index];
+								villainX = position1[index];
+							}
+
+							balloon[0].setBounds(balloonX, freeFall, 61, 90);
+							balloon[3].setBounds(balloonX, freeFall, 61, 90);
+							villain.setBounds(villainX, 20 , 200 , 200);
 
 							Thread.sleep(time1);
-							b1+=3;
-							
-							balloon[0].setBounds(position[n1], b1, 61, 90);
-							balloon[3].setBounds(position[n1], b1, 61, 90);
+							freeFall += 0.1 * time;
+							time += 1;
+
+							if(balloon[0].getY() == 290)
+							{
+								Villain cp = new Villain();
+								forVillain = cp.getVillainX(balloon[0].getX(), player[0].getX());
+								forBalloon = cp.getBalloonX(balloon[0].getX(), player[0].getX());
+								System.out.println("villain.getX() == " + forVillain + " and balloon.getX() == " + forBalloon + "\n");
+							}
 
 							Collision collide = new Collision();
 							collide.start(1);
 
-							if(b1>815)
+							if(freeFall > 815)
 							{
-								flag1=false;
-								b1=0;
-								c1++;
+								flag1 = false;
+								freeFall = 180;
+								time = 1;
+								c++;
+
 								y++;
 								score+=1;
 								scoreTemp=Integer.toString(score);
@@ -574,10 +504,10 @@ public class GamePanel extends JFrame implements KeyListener
 									sound.stop();
 									soundcry.start();
 
-									player1.setVisible(false);
-									player2.setVisible(false);
-									player3.setVisible(false);
-									player4.setVisible(true);
+									player[0].setVisible(false);
+									player[1].setVisible(false);
+									player[2].setVisible(false);
+									player[3].setVisible(true);
 
 									gameOverPanel.setVisible(true);
 									choicePanel.setVisible(true);
@@ -591,33 +521,52 @@ public class GamePanel extends JFrame implements KeyListener
 							}
 						}catch(Exception e){e.printStackTrace();}
 					}
+
+					if(firstDrop == true && balloon[0].getY() > 800)
+						firstDrop = false;
+
+					if(balloon[0].getY() > 800)
+					{
+						villainX = forVillain;
+						balloonX = forBalloon;
+					}
 					break;
+
 				case 2:
-					while(flag2==true && gameOver==false)
+					System.out.println("balloon is SHINY");
+					while(flag2 == true && gameOver == false)
 					{
 						try
 						{
 							balloon[1].setVisible(true);
 
-							balloon[1].setBounds(position[n2], b2, 61, 90);
-							balloon[4].setBounds(position[n2], b2, 61, 90);
+							balloon[1].setBounds(balloonX, freeFall, 61, 90);
+							balloon[4].setBounds(balloonX, freeFall, 61, 90);
+							villain.setBounds(villainX, 20 , 200 , 200);
 
-							Thread.sleep(time2);
-							b2+=3;
 
-							balloon[1].setBounds(position[n2], b2, 61, 90);
-							balloon[4].setBounds(position[n2], b2, 61, 90);
+							Thread.sleep(time1);
+							freeFall += 0.1 * time;
+							time += 1;
+
+							if(balloon[1].getY() == 290)
+							{
+								Villain cp = new Villain();
+								forVillain = cp.getVillainX(balloon[1].getX(), player[0].getX());
+								forBalloon = cp.getBalloonX(balloon[1].getX(), player[0].getX());
+								System.out.println("villain.getX() == " + forVillain + " and balloon.getX() == " + forBalloon + "\n");
+							}
 
 							Collision collide = new Collision();
 							collide.start(2);
 
-							if(b2>815)
+							if(freeFall > 815)
 							{
-								flag2=false;
-								b2=0;
-								c2++;
+								flag2 = false;
+								freeFall = 180;
+								c++;
 								score += 1;
-								scoreTemp=Integer.toString(score);
+								scoreTemp = Integer.toString(score);
 								scoreLabel.setText(scoreTemp);
 
 								if(score>highScore)
@@ -654,10 +603,10 @@ public class GamePanel extends JFrame implements KeyListener
 									sound.stop();
 									soundcry.start();
 
-									player1.setVisible(false);
-									player2.setVisible(false);
-									player3.setVisible(false);
-									player4.setVisible(true);
+									for(int i = 0; i < 3; i++)
+										player[i].setVisible(false);
+									
+									player[3].setVisible(true);
 
 									gameOverPanel.setVisible(true);
 									choicePanel.setVisible(true);
@@ -668,315 +617,16 @@ public class GamePanel extends JFrame implements KeyListener
 									scoreTemp=Integer.toString(score);
 									scoreLabel.setText(scoreTemp);
 								}
+
 							}
+							
 						}catch(Exception e){e.printStackTrace();}
 					}
 
-					break;
-				case 3:
-					while(flag3==true && gameOver==false)
+					if(balloon[1].getY() > 800)
 					{
-							try
-							{
-								balloon[2].setVisible(true);
-
-								balloon[2].setBounds(position[n3], b3, 61, 90);
-								balloon[5].setBounds(position[n3], b3, 61, 90);
-
-								Thread.sleep(5);
-								b3+=3;
-
-								balloon[2].setBounds(position[n3], b3, 61, 90);
-								balloon[5].setBounds(position[n3], b3, 61, 90);
-
-								Collision collide = new Collision();
-								collide.start(3);
-
-								if(b3>815)
-								{
-									flag3=false;
-									b3=0;
-									score -= 5;
-
-									if(score > 0)
-									{	
-										scoreTemp=Integer.toString(score);
-										scoreLabel.setText(scoreTemp);
-									}
-									else if(score <= 0)
-									{
-										score = 0;
-										scoreTemp=Integer.toString(score);
-										scoreLabel.setText(scoreTemp);
-									}
-
-									if(score>highScore)
-									{
-										highScore=score;
-										highScoreLabel.setText(scoreTemp=Integer.toString(highScore));
-									}
-
-									dodgedBalloons+=1;
-
-									if(dodgedBalloons<=5)
-									{
-										dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-										dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-									}
-
-									if(dodgedBalloons==4)
-									{
-										dodgedBalloonsLabel.setForeground(Color.ORANGE);
-										dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-										dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-									}
-
-									if(dodgedBalloons==5)
-									{
-										dodgedBalloonsLabel.setForeground(Color.RED);
-										dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-										dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-									}
-
-									if(dodgedBalloons>5)
-									{
-										gameOver=true;
-										sound.stop();
-										soundcry.start();
-
-										player1.setVisible(false);
-										player2.setVisible(false);
-										player3.setVisible(false);
-										player4.setVisible(true);
-
-										gameOverPanel.setVisible(true);
-										choicePanel.setVisible(true);
-
-										flag1=false;
-
-										score += 5;
-										if(score > 0)
-										{	
-											scoreTemp=Integer.toString(score);
-											scoreLabel.setText(scoreTemp);
-										}
-										else if(score <= 0)
-										{
-											score = 0;
-											scoreTemp=Integer.toString(score);
-											scoreLabel.setText(scoreTemp);
-										}
-									}
-								}
-							}catch(Exception e){e.printStackTrace();}
-					}
-					break;
-				case 4:
-					while(flag4==true && gameOver==false)
-					{
-					try
-					{
-						balloonSet1[color1].setVisible(true);
-
-						balloonSet1[color1].setBounds(position[n4], b4, 61, 90);
-						balloonSet1[color1+3].setBounds(position[n4], b4, 61, 90);
-
-						Thread.sleep(4);
-						b4+=3;
-
-						balloonSet1[color1].setBounds(position[n4], b4, 61, 90);
-						balloonSet1[color1+3].setBounds(position[n4], b4, 61, 90);
-
-						Collision collide = new Collision();
-						collide.start(4);
-
-						if(b4>815)
-						{
-							flag4=false;
-							b4=0;
-
-							if(color1==2)
-								score -= 5;
-
-							else score += 1;
-
-							if(score > 0)
-							{	
-								scoreTemp=Integer.toString(score);
-								scoreLabel.setText(scoreTemp);
-							}
-							else if(score <= 0)
-							{
-								score = 0;
-								scoreTemp=Integer.toString(score);
-								scoreLabel.setText(scoreTemp);
-							}
-
-							if(score>highScore)
-							{
-								highScore=score;
-								highScoreLabel.setText(scoreTemp=Integer.toString(highScore));
-							}
-
-							dodgedBalloons+=1;
-
-							if(dodgedBalloons<=5)
-							{
-								dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-								dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-							}
-
-							if(dodgedBalloons==4)
-							{
-								dodgedBalloonsLabel.setForeground(Color.ORANGE);
-								dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-								dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-							}
-
-							if(dodgedBalloons==5)
-							{
-								dodgedBalloonsLabel.setForeground(Color.RED);
-								dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-								dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-							}
-
-							if(dodgedBalloons>5)
-							{
-								gameOver=true;
-								sound.stop();
-								soundcry.start();
-
-								player1.setVisible(false);
-								player2.setVisible(false);
-								player3.setVisible(false);
-								player4.setVisible(true);
-
-								gameOverPanel.setVisible(true);
-								choicePanel.setVisible(true);
-
-								flag1=false;
-
-								if(color1==2) score += 5;
-								else score -= 1;
-
-								if(score > 0)
-								{	
-									scoreTemp=Integer.toString(score);
-									scoreLabel.setText(scoreTemp);
-								}
-								else if(score <= 0)
-								{
-									score = 0;
-									scoreTemp=Integer.toString(score);
-									scoreLabel.setText(scoreTemp);
-								}
-							}
-						}
-					}catch(Exception e){e.printStackTrace();}
-					}
-					break;
-				case 5:
-					while(flag5==true && gameOver==false)
-					{
-						try
-						{
-							balloonSet2[color2].setVisible(true);
-
-							balloonSet2[color2].setBounds(position[n5], b5, 61, 90);
-							balloonSet2[color2+3].setBounds(position[n5], b5, 61, 90);
-
-							Thread.sleep(4);
-							b5+=3;
-
-							balloonSet2[color2].setBounds(position[n5], b5, 61, 90);
-							balloonSet2[color2+3].setBounds(position[n5], b5, 61, 90);
-
-							Collision collide = new Collision();
-							collide.start(5);
-
-							if(b5>815)
-							{
-								flag5=false;
-								b5=0;
-
-								if(color2==2)
-									score -= 5;
-
-								else score += 1;
-
-								if(score > 0)
-								{	
-									scoreTemp=Integer.toString(score);
-									scoreLabel.setText(scoreTemp);
-								}
-								else if(score <= 0)
-								{
-									score = 0;
-									scoreTemp=Integer.toString(score);
-									scoreLabel.setText(scoreTemp);
-								}
-
-								if(score>highScore)
-								{
-									highScore=score;
-									highScoreLabel.setText(scoreTemp=Integer.toString(highScore));
-								}
-
-								dodgedBalloons+=1;
-
-								if(dodgedBalloons<=5)
-								{
-									dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-									dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-								}
-
-								if(dodgedBalloons==4)
-								{
-									dodgedBalloonsLabel.setForeground(Color.ORANGE);
-									dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-									dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-								}
-
-								if(dodgedBalloons==5)
-								{
-									dodgedBalloonsLabel.setForeground(Color.RED);
-									dodgedBalloonsTemp=Integer.toString(dodgedBalloons);
-									dodgedBalloonsLabel.setText(dodgedBalloonsTemp);
-								}
-
-								if(dodgedBalloons>5)
-								{
-									gameOver=true;
-									sound.stop();
-									soundcry.start();
-
-									player1.setVisible(false);
-									player2.setVisible(false);
-									player3.setVisible(false);
-									player4.setVisible(true);
-
-									gameOverPanel.setVisible(true);
-									choicePanel.setVisible(true);
-
-									flag1=false;
-
-									if(color2==2) score += 5;
-									else score -= 1;
-
-									if(score > 0)
-									{	
-										scoreTemp=Integer.toString(score);
-										scoreLabel.setText(scoreTemp);
-									}
-									else if(score <= 0)
-									{
-										score = 0;
-										scoreTemp=Integer.toString(score);
-										scoreLabel.setText(scoreTemp);
-									}
-								}
-							}
-						}catch(Exception e){e.printStackTrace();}
+						villainX = forVillain;
+						balloonX = forBalloon;
 					}
 					break;
 			}
@@ -986,67 +636,35 @@ public class GamePanel extends JFrame implements KeyListener
 
 	class Collision extends Thread
 	{
-
-		//@Override
-		Rectangle wBalloon;
 		public void start(int number)
 		{
-			switch (number) {
-				case 1:
-					wBalloon = new Rectangle(position[n1], b1, 61, 90);
-					break;
-				case 2:
-					wBalloon = new Rectangle(position[n2], b2, 61, 90);
-					break;
-				case 3:
-					wBalloon = new Rectangle(position[n3], b3, 61, 90);
-					break;
-				case 4:
-					wBalloon = new Rectangle(position[n4], b4, 61, 90);
-					break;
-				case 5:
-					wBalloon = new Rectangle(position[n5], b5, 61, 90);
-					break;
-			}
-
-			Rectangle open = new Rectangle(x+50, 444, 179, 254);
-			Rectangle close = new Rectangle(x+50, 520, 179, 184);
+			Rectangle wBalloon = new Rectangle(balloonX, freeFall, 61, 90);
+			Rectangle open = new Rectangle(x + 50, 444, 179, 254);
+			Rectangle close = new Rectangle(x + 50, 535, 179, 184);
 			boolean popped = false;
 
-			if(wBalloon.intersects(close) && player1.isVisible())
+			if(wBalloon.intersects(close) && player[0].isVisible())
 			{	
-				gameOver=true;
+				gameOver = true;
 
 				switch (number) {
 				case 1:
-					balloon[3].setBounds(position[n1], 531, 61, 90);
+					balloon[3].setBounds(balloonX, balloon[0].getY(), 61, 90);
 					balloon[0].setVisible(false);
 					balloon[3].setVisible(true);
 					flag1=false;
 					break;
 				case 2:
-					balloon[4].setBounds(position[n2], 531, 61, 90);
+					balloon[4].setBounds(balloonX, balloon[1].getY(), 61, 90);
 					balloon[1].setVisible(false);
 					balloon[4].setVisible(true);
 					flag2=false;
 					break;
 				case 3:
-					balloon[5].setBounds(position[n3], 531, 61, 90);
+					balloon[5].setBounds(balloonX, balloon[2].getY(), 61, 90);
 					balloon[2].setVisible(false);
 					balloon[5].setVisible(true);
 					flag3=false;
-					break;
-				case 4:
-					balloonSet1[color1+3].setBounds(position[n4], 531, 61, 90);
-					balloonSet1[color1].setVisible(false);
-					balloonSet1[color1+3].setVisible(true);
-					flag4=false;
-					break;
-				case 5:
-					balloonSet2[color1+3].setBounds(position[n5], 531, 61, 90);
-					balloonSet2[color1].setVisible(false);
-					balloonSet2[color1+3].setVisible(true);
-					flag5=false;
 					break;
 				}
 
@@ -1054,14 +672,14 @@ public class GamePanel extends JFrame implements KeyListener
 				soundpop.start();
 				soundcry.start();
 
-				player1.setVisible(false);
-				player3.setVisible(true);
+				player[0].setVisible(false);
+				player[2].setVisible(true);
 
 				gameOverPanel.setVisible(true);
 				choicePanel.setVisible(true);	
 			}
 
-			else if(wBalloon.intersects(open) && player2.isVisible())
+			else if(wBalloon.intersects(open) && player[1].isVisible())
 			{
 				switch (number) {
 					case 1:
@@ -1083,7 +701,7 @@ public class GamePanel extends JFrame implements KeyListener
 							flag1=false;
 						}
 
-						c1++;
+						c++;
 						y++;
 						break;
 					case 2:
@@ -1092,20 +710,21 @@ public class GamePanel extends JFrame implements KeyListener
 
 						while(flag2==true)
 						{
-							score+=30;
-							scoreTemp=Integer.toString(score);
+							score += 30;
+							scoreTemp = Integer.toString(score);
 							scoreLabel.setText(scoreTemp);
 
 							if(score>highScore)
 							{
-								highScore=score;
-								highScoreLabel.setText(scoreTemp=Integer.toString(highScore));
+								highScore = score;
+								highScoreLabel.setText(scoreTemp = Integer.toString(highScore));
 							}
 
 							flag2=false;
 						}
 
-						c2++;
+						c++;
+						y++;
 						break;
 					case 3:
 						balloon[2].setVisible(false);
@@ -1113,59 +732,17 @@ public class GamePanel extends JFrame implements KeyListener
 
 						while(flag3==true)
 						{
-							score+=20;
-							scoreTemp=Integer.toString(score);
+							score += 20;
+							scoreTemp = Integer.toString(score);
 							scoreLabel.setText(scoreTemp);
 
 							if(score>highScore)
 							{
-								highScore=score;
+								highScore = score;
 								highScoreLabel.setText(scoreTemp=Integer.toString(highScore));
 							}
 
 							flag3=false;
-						}
-						break;
-					case 4:
-						balloonSet1[color1].setVisible(false);
-						balloonSet1[color1+3].setVisible(true);
-
-						while(flag4==true)
-						{
-							if(color1==0) score+=10;
-							if(color1==1) score+=30;
-							if(color1==2) score+=20;
-							scoreTemp=Integer.toString(score);
-							scoreLabel.setText(scoreTemp);
-
-							if(score>highScore)
-							{
-								highScore=score;
-								highScoreLabel.setText(scoreTemp=Integer.toString(highScore));
-							}
-
-							flag4=false;
-						}
-						break;
-					case 5:
-						balloonSet2[color2].setVisible(false);
-						balloonSet2[color2+3].setVisible(true);
-
-						while(flag5==true)
-						{
-							if(color2==0) score+=10;
-							if(color2==1) score+=30;
-							if(color2==2) score+=20;
-							scoreTemp=Integer.toString(score);
-							scoreLabel.setText(scoreTemp);
-
-							if(score>highScore)
-							{
-								highScore=score;
-								highScoreLabel.setText(scoreTemp=Integer.toString(highScore));
-							}
-
-							flag5=false;
 						}
 						break;
 				}
@@ -1186,31 +763,11 @@ public class GamePanel extends JFrame implements KeyListener
 							case 3:
 								balloon[5].setVisible(false);
 								break;
-							case 4:
-								balloonSet1[color1+3].setVisible(false);
-								break;
-							case 5:
-								balloonSet2[color2+3].setVisible(false);
-								break;
 						}
+						
 						soundpop.pause();
-						switch (number) {
-							case 1:
-								b1=0;
-								break;
-							case 2:
-								b2=0;
-								break;
-							case 3:
-								b3=0;
-								break;
-							case 4:
-								b4=0;
-								break;
-							case 5:
-								b5=0;
-								break;
-						}
+						freeFall = 180;
+						time = 1;				
 						popped=true;
 					}catch(Exception ex){
 						ex.printStackTrace();}

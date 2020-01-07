@@ -55,10 +55,10 @@ public class WaterBalloonPop extends JFrame implements MouseListener
 			//	if(mainClass.heh() == false)
 			//		mainClass.sound.stop();
 				mainClass.sound.stop();	
-				if(mainClass.enabledMusic == true)
-					gameProper = new GamePanel(true);
-				else if(mainClass.enabledMusic == false)
-					gameProper = new GamePanel(false);
+				//if(mainClass.enabledMusic == true)
+					gameProper = new GamePanel();
+				//else if(mainClass.enabledMusic == false)
+					// gameProper = new GamePanel();
 					//System.out.println(gameProper.enabledMusic);
 				/*if(mainClass.sfx.getIcon()==mainClass.sfx1) gameProper.enabledSfx=true;
 				if(mainClass.sfx.getIcon()==mainClass.sfx3) gameProper.enabledSfx=false;*/
