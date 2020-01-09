@@ -14,7 +14,7 @@ public class Villain{
 			{
 				case 50:
 					System.out.println("A1");
-					villainX = fourth;
+					villainX = third;
 					break;
 				case 225:
 					System.out.println("A2");
@@ -95,7 +95,7 @@ public class Villain{
 					break;
 				case 575:
 					System.out.println("D4");
-					villainX = first;
+					villainX = second;
 					break;
 			}
 		}
@@ -114,7 +114,7 @@ public class Villain{
 			switch(playerX)
 			{
 				case 50:
-					balloonX = fourth;
+					balloonX = third;
 					break;
 				case 225:
 					balloonX = third;
@@ -180,7 +180,7 @@ public class Villain{
 					balloonX = second;
 					break;
 				case 575:
-					balloonX = first;
+					balloonX = second;
 					break;
 			}
 		}
