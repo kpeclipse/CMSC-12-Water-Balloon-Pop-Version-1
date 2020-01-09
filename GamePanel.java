@@ -26,7 +26,7 @@ public class GamePanel extends JFrame implements KeyListener
 
 	private int x = 400, freeFall = 180, index, score, highScore, time = 1;
 	private int forVillain, forBalloon, villainX, balloonX, balloonIndex;
-	private int add1, add2, time1 = 9, color1, color2, dodgedBalloons=0;
+	private int add1, add2, time1 = 9, color1, color2, dodgedBalloons;
 	private int position[] = {146, 321, 496, 671}, position1[] = {70, 245, 420, 595};
 	private int v, vballoonX, vballoonY = 175;
 
@@ -202,17 +202,17 @@ public class GamePanel extends JFrame implements KeyListener
 
 				else
 				{
-					if(over==true)
+					if(over == true)
 					{
 						End();
 						cancel();
 					}
 
-					if(again==true)
+					if(again == true)
 					{
 						dispose();
 						sound.stop();
-
+ 
 						newHighScore = new NewHighScore(highScore);
 
 						new GamePanel();
@@ -265,11 +265,14 @@ public class GamePanel extends JFrame implements KeyListener
 	{
 		int key = e.getKeyCode();
 		int move = 175;
+
 		if (key == KeyEvent.VK_LEFT && gameOver == false) {
 			while(hold == false){
 				x -= move;
+
 				for(int i = 1; i < 4; i++)
 					player[i].setVisible(false);
+				
 				player[0].setVisible(true);
 
 				if (x < 0)
@@ -285,8 +288,10 @@ public class GamePanel extends JFrame implements KeyListener
 		if (key == KeyEvent.VK_RIGHT && gameOver == false) {
 			while(hold==false){
 				x += move;
+				
 				for(int i = 1; i < 4; i++)
 					player[i].setVisible(false);
+				
 				player[0].setVisible(true);
 
 				if (x > 700)
@@ -392,10 +397,11 @@ public class GamePanel extends JFrame implements KeyListener
 					if (freeFall > 800) {		
 						freeFall = 180;
 						time = 1;
+						dodgedBalloons += 1;
 						
-						if(balloonIndex == 0 || balloonIndex == 1)
+						if((balloonIndex == 0 || balloonIndex == 1) && dodgedBalloons <= 5)
 							score += 1;
-						else if(balloonIndex == 2){
+						else if(balloonIndex == 2  && dodgedBalloons <= 5){
 							score -= 10;
 							if(score < 0)
 								score = 0;
@@ -407,8 +413,6 @@ public class GamePanel extends JFrame implements KeyListener
 							highScore=score;
 							highScoreLabel.setText(Integer.toString(highScore));
 						}
-
-						dodgedBalloons += 1;
 
 						if (dodgedBalloons <= 5) {
 							
@@ -436,13 +440,14 @@ public class GamePanel extends JFrame implements KeyListener
 							gameOverPanel.setVisible(true);
 							choicePanel.setVisible(true);
 
-							if(balloonIndex == 0 || balloonIndex == 1)
+							/*if(balloonIndex == 0 || balloonIndex == 1)
 								score -= 1;
 							else if(balloonIndex == 3)
 								score += 10;
 							scoreTemp=Integer.toString(score);
-							scoreLabel.setText(scoreTemp);
+							scoreLabel.setText(scoreTemp);*/
 						}
+
 						// SET LOCATION AT RANDOM
 						// firstDrop = false;
 						index = r.nextInt(4);
@@ -468,6 +473,7 @@ public class GamePanel extends JFrame implements KeyListener
 			// DID NOT POP
 			if(wBalloon.intersects(close) && player[0].isVisible())
 			{	
+				System.out.println("HIT! \n----------------------------");
 				gameOver = true;
 
 				balloon[balloonIndex + 3].setBounds(balloonX, balloon[balloonIndex].getY(), 61, 90);

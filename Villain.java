@@ -14,11 +14,11 @@ public class Villain{
 			{
 				case 50:
 					System.out.println("A1");
-					villainX = third;
+					villainX = fourth;
 					break;
 				case 225:
 					System.out.println("A2");
-					villainX = third;
+					villainX = fourth;
 					break;
 				case 400:
 					System.out.println("A3");
