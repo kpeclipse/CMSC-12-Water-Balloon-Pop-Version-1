@@ -11,12 +11,10 @@ import javax.imageio.ImageIO;
 import java.net.URL;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
-<<<<<<< HEAD
 import javax.swing.border.Border;
 
 public class WaterBalloonPop extends JFrame implements MouseListener
 {
-=======
 
 public class WaterBalloonPop extends JFrame implements MouseListener{
 	/**
