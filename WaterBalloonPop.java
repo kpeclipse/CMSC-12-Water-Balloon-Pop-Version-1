@@ -3,7 +3,6 @@ import javax.swing.*;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-<<<<<<< HEAD
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -18,20 +17,6 @@ public class WaterBalloonPop extends JFrame implements MouseListener{
 	 *
 	 */
 	private static final long serialVersionUID = -2657183267005854109L;
-=======
-
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.net.URL;
-import javax.swing.JPanel;
-import javax.swing.BorderFactory;
-import javax.swing.border.Border;
-
-public class WaterBalloonPop extends JFrame implements MouseListener
-{
->>>>>>> parent of bf7c7a9... Removed errors
 	private JButton play;
 	protected MajorPanel mainClass;
 	private GamePanel gameProper;
