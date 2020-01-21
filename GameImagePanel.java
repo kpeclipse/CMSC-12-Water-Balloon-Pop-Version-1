@@ -1,4 +1,3 @@
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -7,6 +6,7 @@ import javax.swing.JPanel;
 public class GameImagePanel extends JPanel
 {
 	private BufferedImage image;
+	private static final long serialVersionUID = -2657183267005854109L;
 
 	public GameImagePanel(BufferedImage image)
 	{
@@ -18,7 +18,6 @@ public class GameImagePanel extends JPanel
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		Dimension d = getSize();
 
 		g.drawImage(image, 0, 0, this);
 	}

@@ -1,19 +1,16 @@
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import java.net.URL;
 import java.util.Timer;
 
 public class GamePanel extends JFrame implements KeyListener
 {
+	private static final long serialVersionUID = -2657183267005854109L;
 	private BufferedImage image;
 	private File file = null;
 	private GameImagePanel background;
@@ -27,22 +24,16 @@ public class GamePanel extends JFrame implements KeyListener
 
 	private int x = 400, freeFall = 180, randomFreeFall = 0, index, score, highScore, time = 1;
 	private int forVillain, forBalloon, villainX, balloonX, balloonIndex, randomBalloonIndex, randomBalloonX;
-	private int add1, add2, color1, color2, dodgedBalloons;
-	private int x = 400, freeFall = 180, index, score, highScore, time = 1;
-	private int forVillain, forBalloon, villainX, balloonX, balloonIndex;
-	private int add1, add2, time1 = 9, color1, color2, dodgedBalloons;
+	private int dodgedBalloons;
 	private int position[] = {146, 321, 496, 671}, position1[] = {70, 245, 420, 595};
-	private int v, vballoonX, vballoonY = 175;
 
 	private boolean hold = false, gameOver = false, over = false, again = false, firstDrop = true, flag;
 
-	private String scoreTemp, dodgedBalloonsTemp, line;
+	private String scoreTemp;
 	private Random r = new Random();
 	private UmbrellaClose uc;
 	private Fall fall;
 
-	private WaterBalloonPop game;
-	private NewHighScore newHighScore;
 	private HighScore prevHScore;
 
 	private SoundClip sound = new SoundClip("travel.wav", 0);
@@ -226,7 +217,7 @@ public class GamePanel extends JFrame implements KeyListener
 						dispose();
 						sound.stop();
  
-						newHighScore = new NewHighScore(highScore);
+						new NewHighScore(highScore);
 
 						new GamePanel();
 						cancel();
@@ -248,9 +239,8 @@ public class GamePanel extends JFrame implements KeyListener
 		dispose();
 		sound.stop();
 
-		newHighScore = new NewHighScore(highScore);
-
-		game = new WaterBalloonPop();
+		new NewHighScore(highScore);
+		new WaterBalloonPop();
 	}
 
 	public void BeforeFall()

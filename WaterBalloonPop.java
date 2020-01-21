@@ -1,30 +1,15 @@
-import java.io.*;
 import javax.swing.*;
-import java.applet.*;
-import java.awt.*;
 import java.awt.event.*;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.net.URL;
-import javax.swing.JPanel;
 import javax.swing.BorderFactory;
-import javax.swing.border.Border;
-
-public class WaterBalloonPop extends JFrame implements MouseListener
-{
 
 public class WaterBalloonPop extends JFrame implements MouseListener{
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = -2657183267005854109L;
->>>>>>> parent of 3e6bc6c... Edited errors
 	private JButton play;
 	protected MajorPanel mainClass;
-	private GamePanel gameProper;
 	private ImageIcon play1, icon2;
 	
 	public static void main(String[] args)
@@ -63,7 +48,7 @@ public class WaterBalloonPop extends JFrame implements MouseListener{
 			//		mainClass.sound.stop();
 				mainClass.sound.stop();	
 				//if(mainClass.enabledMusic == true)
-					gameProper = new GamePanel();
+					new GamePanel();
 				//else if(mainClass.enabledMusic == false)
 					// gameProper = new GamePanel();
 					//System.out.println(gameProper.enabledMusic);
