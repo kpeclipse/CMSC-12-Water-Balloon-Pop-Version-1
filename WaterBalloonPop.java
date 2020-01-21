@@ -11,10 +11,12 @@ import javax.imageio.ImageIO;
 import java.net.URL;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
-import javax.swing.border.Border;
-
-public class WaterBalloonPop extends JFrame implements MouseListener
-{
+//
+public class WaterBalloonPop extends JFrame implements MouseListener{
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -2657183267005854109L;
 	private JButton play;
 	protected MajorPanel mainClass;
 	private GamePanel gameProper;
