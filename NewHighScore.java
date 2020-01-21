@@ -1,12 +1,17 @@
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 
-public class NewHighScore{
+public class NewHighScore
+{
 	
-	private String filename = "High Score.txt";
+	private String filename = "High Score.txt", line;
 	private File file;
+	private FileReader fileReader;
+	private BufferedReader bufferedReader;
 	private FileWriter fileWriter;
 	private BufferedWriter bufferedWriter;
 	public int highScore;

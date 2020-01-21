@@ -14,7 +14,7 @@ public class Villain{
 			{
 				case 50:
 					System.out.println("A1");
-					villainX = third;
+					villainX = fourth;
 					break;
 				case 225:
 					System.out.println("A2");
@@ -91,7 +91,7 @@ public class Villain{
 					break;
 				case 400:
 					System.out.println("D3");
-					villainX = first;
+					villainX = second;
 					break;
 				case 575:
 					System.out.println("D4");
@@ -117,7 +117,7 @@ public class Villain{
 					balloonX = fourth;
 					break;
 				case 225:
-					balloonX = fourth;
+					balloonX = third;
 					break;
 				case 400:
 					balloonX = third;
@@ -177,7 +177,7 @@ public class Villain{
 					balloonX = second;
 					break;
 				case 400:
-					balloonX = first;
+					balloonX = second;
 					break;
 				case 575:
 					balloonX = first;

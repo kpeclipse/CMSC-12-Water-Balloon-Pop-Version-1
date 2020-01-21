@@ -1,21 +1,33 @@
+import java.io.*;
 import javax.swing.*;
+import java.applet.*;
+import java.awt.*;
 import java.awt.event.*;
-import javax.swing.BorderFactory;
 
-public class WaterBalloonPop extends JFrame implements MouseListener{
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -2657183267005854109L;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.net.URL;
+import javax.swing.JPanel;
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+
+public class WaterBalloonPop extends JFrame implements MouseListener
+{
 	private JButton play;
 	protected MajorPanel mainClass;
+	private GamePanel gameProper;
 	private ImageIcon play1, icon2;
 	
-	public static void main(String[] args){
+	public static void main(String[] args)
+	{
 		new WaterBalloonPop();
-	}	
+	}
+	
 
-	public WaterBalloonPop(){
+	public WaterBalloonPop()
+	{
 		super("WATER BALLOON POP! (Version 2)");
 		setSize(1200,725);
 		setLocationRelativeTo(null);
@@ -33,7 +45,8 @@ public class WaterBalloonPop extends JFrame implements MouseListener{
 		play.setFocusPainted(false);
 		play.setBorder(BorderFactory.createEmptyBorder());	
 		play.addMouseListener(this);
-		play.addActionListener(new ActionListener(){
+		play.addActionListener(new ActionListener()
+		{
 			@Override
 			public void actionPerformed(ActionEvent event)
 			{
@@ -43,7 +56,7 @@ public class WaterBalloonPop extends JFrame implements MouseListener{
 			//		mainClass.sound.stop();
 				mainClass.sound.stop();	
 				//if(mainClass.enabledMusic == true)
-					new GamePanel();
+					gameProper = new GamePanel();
 				//else if(mainClass.enabledMusic == false)
 					// gameProper = new GamePanel();
 					//System.out.println(gameProper.enabledMusic);
@@ -65,7 +78,8 @@ public class WaterBalloonPop extends JFrame implements MouseListener{
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e){
+	public void mouseEntered(MouseEvent e)
+	{
 		if(e.getComponent() == play)
 		{
 			icon2 = new ImageIcon("play2.png");
@@ -73,11 +87,12 @@ public class WaterBalloonPop extends JFrame implements MouseListener{
 		}
 	}
 
-	public void mouseExited(MouseEvent exited){
+	public void mouseExited(MouseEvent exited)
+	{
 		play.setIcon(play1);
 	}
 
 	public void mouseReleased(MouseEvent e){}
 	public void mouseClicked(MouseEvent e){}
-	public void mousePressed(MouseEvent e){}
+	public void mousePressed(MouseEvent e) {}
 }
