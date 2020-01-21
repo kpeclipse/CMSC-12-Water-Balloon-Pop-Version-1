@@ -1,21 +1,18 @@
 import java.io.*;
-import java.util.*;
 import javax.swing.*;
-import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import java.net.URL;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
-import javax.swing.border.Border;
 
 public class MajorPanel extends JPanel implements ActionListener, MouseListener
 {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -5340143184806717474L;
 	private BufferedImage image;
 	private File file = null;
 	private GameImagePanel howbg, creditsbg, exitbg;

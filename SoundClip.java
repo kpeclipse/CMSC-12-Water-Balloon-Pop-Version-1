@@ -1,15 +1,14 @@
 import java.io.*;
 import java.net.URL;
 import javax.sound.sampled.*;
-import javax.swing.*;
 
 public class SoundClip{
 	private URL url;
 	private Clip clip;
-	private String filename;
-	private int identifier;
+	private final String filename;
+	private final int identifier;
 
-	public SoundClip(String filename, int identifier) {
+	public SoundClip(final String filename, final int identifier) {
 		this.filename = filename;
 		this.identifier = identifier;
 	}
@@ -42,7 +41,7 @@ public class SoundClip{
 	public void start(){
 		try{
 			url = this.getClass().getClassLoader().getResource(filename);
-			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+			final AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
 			clip = AudioSystem.getClip();
 			clip.open(audioIn);
 
@@ -51,11 +50,11 @@ public class SoundClip{
 
 			if(identifier == 1)
 			clip.start();
-		}catch (UnsupportedAudioFileException e) {
+		}catch (final UnsupportedAudioFileException e) {
 			e.printStackTrace();
-		}catch (IOException e) {
+		}catch (final IOException e) {
 			e.printStackTrace();
-		}catch (LineUnavailableException e) {
+		}catch (final LineUnavailableException e) {
 			e.printStackTrace();
 		}
 	}
