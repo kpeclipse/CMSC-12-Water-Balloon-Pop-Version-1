@@ -91,7 +91,7 @@ public class Villain{
 					break;
 				case 400:
 					System.out.println("D3");
-					villainX = second;
+					villainX = first;
 					break;
 				case 575:
 					System.out.println("D4");
@@ -117,7 +117,7 @@ public class Villain{
 					balloonX = fourth;
 					break;
 				case 225:
-					balloonX = third;
+					balloonX = fourth;
 					break;
 				case 400:
 					balloonX = third;
@@ -177,7 +177,7 @@ public class Villain{
 					balloonX = second;
 					break;
 				case 400:
-					balloonX = second;
+					balloonX = first;
 					break;
 				case 575:
 					balloonX = first;
