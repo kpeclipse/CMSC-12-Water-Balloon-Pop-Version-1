@@ -21,17 +21,20 @@ public class GamePanel extends JFrame implements KeyListener
 	private JLabel[] player = new JLabel[4];
 	private JLabel[] balloon = new JLabel[6];
 
-	private int x = 400, freeFall = 180, index, score, highScore, time = 1;
-	private int forVillain, forBalloon, villainX, balloonX, balloonIndex;
+	private int x = 400, freeFall = 0, blackFreeFall = 180, index, score, highScore;
+	private int forVillain, forBalloon, balloonX, column, time = 1, blackTime = 1;
+	private int balloonAI, playerAI;
 	private int dodgedBalloons;
 	private int position[] = {146, 321, 496, 671}, position1[] = {70, 245, 420, 595};
 
-	private boolean hold = false, gameOver = false, over = false, again = false, firstDrop = true, flag;
+	private boolean hold = false, gameOver = false, over = false, again = false, flag;
 
 	private String scoreTemp;
 	private Random r = new Random();
 	private UmbrellaClose uc;
 	private Fall fall;
+	private Collision collide;
+	private VillainDrop villainDrop;
 
 	private HighScore prevHScore;
 
@@ -131,6 +134,7 @@ public class GamePanel extends JFrame implements KeyListener
 			player[3].setBounds(x, 435, 254, 254);
 
 			villain = new JLabel(new ImageIcon ("VILLAIN.png"));
+			villain.setBounds(position1[2], 20, 200,200);
 			
 			balloon[0] = new JLabel(new ImageIcon ("RED BALLOON.png"));
 			balloon[1] = new JLabel(new ImageIcon ("SHINY BALLOON.png"));
@@ -235,20 +239,19 @@ public class GamePanel extends JFrame implements KeyListener
 	public void BeforeFall()
 	{
 		try{
-			if (firstDrop == true) {
-				index = r.nextInt(4);
-				System.out.println("First Drop is at Column " + (index + 1));
-				balloonX = position[index];
-				villainX = position1[index];
-				firstDrop = false;
-			}
+			column = r.nextInt(4);
+			System.out.println("First Drop is at Column " + (column + 1));
+			balloonX = position[column];
 
-			balloonIndex = r.nextInt(3);
+			index = r.nextInt(2);
 
 			fall = new Fall();
 			fall.start();
 
-			flag = true;
+			Thread.sleep(100);
+
+			villainDrop = new VillainDrop();
+			villainDrop.start();
 		}catch(Exception e){e.printStackTrace();}
 	}
 
@@ -363,42 +366,33 @@ public class GamePanel extends JFrame implements KeyListener
 
 					// System.out.println("Next villainX should be == " + forVillain);
 					// System.out.println("Next balloonX should be == " + forBalloon + "\n");
-					balloon[balloonIndex].setVisible(true);
+					balloon[index].setVisible(true);
 					
-					balloon[balloonIndex].setBounds(balloonX, freeFall, 61, 90);
-					balloon[balloonIndex + 3].setBounds(balloonX, freeFall, 61, 90);
-					villain.setBounds(villainX, 20 , 200 , 200);
+					balloon[index].setBounds(balloonX, freeFall, 61, 90);
+					balloon[index + 3].setBounds(balloonX, freeFall, 61, 90);
 
 					freeFall += 0.1 * time;
 					time += 1;
 
-					// System.out.println(balloon[balloonIndex].getY());
-					if (balloon[balloonIndex].getY() == 268) {
-						System.out.println("WHERE IS VILLAIN ATM? " + villain.getX() + " WHERE IS BALLOON ATM? " + balloon[balloonIndex].getX());
-						Villain cp = new Villain();
-						forVillain = cp.getVillainX(balloon[balloonIndex].getX(), player[0].getX());
-						forBalloon = cp.getBalloonX(balloon[balloonIndex].getX(), player[0].getX());
-						System.out.println("VILLAIN'S NEXT LOCATION (if not dodged): " + forVillain + " BALLOON'S NEXT LOCATION (if not dodged): " + forBalloon + "\n");
-					}
-
 					Thread.sleep(9);
 
-					Collision collide = new Collision();
+					collide = new Collision();
 					collide.start();
+					
+					// System.out.println(balloon[index].getY());
+					if (balloon[index].getY() == 0) {
+						balloonAI = balloon[index].getX();
+						playerAI = player[0].getX();
+					}
 			
 					if (freeFall > 800) {		
-						freeFall = 180;
+						freeFall = 0;
 						time = 1;
 						dodgedBalloons += 1;
 						
-						if((balloonIndex == 0 || balloonIndex == 1) && dodgedBalloons <= 5)
+						if(dodgedBalloons <= 5)
 							score += 1;
-						else if(balloonIndex == 2  && dodgedBalloons <= 5){
-							score -= 10;
-							if(score < 0)
-								score = 0;
-						}
-
+	
 						scoreLabel.setText(Integer.toString(score));
 		
 						if (score > highScore) {
@@ -430,26 +424,99 @@ public class GamePanel extends JFrame implements KeyListener
 							gameOverPanel.setVisible(true);
 							choicePanel.setVisible(true);
 
-							/*if(balloonIndex == 0 || balloonIndex == 1)
+							/*if(index == 0 || index == 1)
 								score -= 1;
-							else if(balloonIndex == 3)
+							else if(index == 3)
 								score += 10;
 							scoreTemp=Integer.toString(score);
 							scoreLabel.setText(scoreTemp);*/
 						}
 
-						// SET LOCATION AT RANDOM
-						// firstDrop = false;
-						index = r.nextInt(4);
-						balloonX = position[index];
-						villainX = position1[index];
-						System.out.println("DODGED!\nNEXT RANDOM COLUMN: " + (index + 1) + "\n--------------");
 						flag = false;
 					}
 				} catch (Exception e) {e.printStackTrace();}
 			}
 		}
 	}
+
+	class VillainDrop extends Thread
+	{
+		public void start(){
+			try{
+				Villain cp = new Villain();
+				forVillain = cp.getVillainX(balloonAI, playerAI);
+				forBalloon = cp.getBalloonX(balloonAI, playerAI);
+
+				while(flag == false && gameOver == false){
+					balloon[2].setVisible(true);
+
+					villain.setBounds(forVillain, 20, 200, 200);
+					balloon[2].setBounds(forBalloon, blackFreeFall, 61, 90);
+					balloon[5].setBounds(forBalloon, blackFreeFall, 61, 90);
+				
+					Thread.sleep(9);
+					BlackCollision blackCollide = new BlackCollision();
+					blackCollide.start();
+	
+					blackFreeFall += 0.1 * blackTime;
+					blackTime += 1;
+					
+					if (blackFreeFall > 800) {		
+						blackFreeFall = 180;
+						dodgedBalloons += 1;
+						blackTime = 1;
+								
+						if(index == 2  && dodgedBalloons <= 5){
+							score -= 10;
+							if(score < 0)
+							score = 0;
+						}
+		
+						scoreLabel.setText(Integer.toString(score));
+				
+						if (score > highScore) {
+							highScore=score;
+							highScoreLabel.setText(Integer.toString(highScore));
+						}
+		
+						if (dodgedBalloons <= 5) {
+							dodgedBalloonsLabel.setText(Integer.toString(dodgedBalloons));
+						
+							if (dodgedBalloons == 4)
+								dodgedBalloonsLabel.setForeground(Color.ORANGE);
+		
+							if (dodgedBalloons == 5) 
+								dodgedBalloonsLabel.setForeground(Color.RED);
+						}
+		
+						else if (dodgedBalloons > 5) {
+							gameOver = true;
+							sound.stop();
+							soundcry.start();
+		
+							for(int i = 0; i < 3; i++)
+								player[i].setVisible(false);
+									
+								player[3].setVisible(true);
+		
+								gameOverPanel.setVisible(true);
+								choicePanel.setVisible(true);
+		
+									/*if(index == 0 || index == 1)
+										score -= 1;
+									else if(index == 3)
+										score += 10;
+									scoreTemp=Integer.toString(score);
+									scoreLabel.setText(scoreTemp);*/
+						}
+		
+						flag = true;
+					}
+				}
+			} catch (Exception e) {e.printStackTrace();}
+		}	
+	}
+	
 
 	class Collision extends Thread
 	{
@@ -466,9 +533,9 @@ public class GamePanel extends JFrame implements KeyListener
 				System.out.println("HIT! \n----------------------------");
 				gameOver = true;
 
-				balloon[balloonIndex + 3].setBounds(balloonX, balloon[balloonIndex].getY(), 61, 90);
-				balloon[balloonIndex].setVisible(false);
-				balloon[balloonIndex + 3].setVisible(true);
+				balloon[index + 3].setBounds(balloonX, balloon[index].getY(), 61, 90);
+				balloon[index].setVisible(false);
+				balloon[index + 3].setVisible(true);
 				
 				//flag = false;
 
@@ -486,20 +553,20 @@ public class GamePanel extends JFrame implements KeyListener
 			// POP
 			else if(wBalloon.intersects(open) && player[1].isVisible())
 			{
-				balloon[balloonIndex + 3].setVisible(true);
-				balloon[balloonIndex].setVisible(false);
+				if(index == 0 || index == 1)
+					time = 1;
+
+				balloon[index + 3].setVisible(true);
+				balloon[index].setVisible(false);
 				System.out.println("POPPED! \n----------------------------");
 
 				while (flag == true) {
-					switch (balloonIndex) {
+					switch (index) {
 						case 0:
 							score += 10;
 							break;
 						case 1:
 							score += 30;
-							break;
-						case 2:
-							score += 20;
 							break;
 					}
 					
@@ -518,18 +585,85 @@ public class GamePanel extends JFrame implements KeyListener
 					try {
 						soundpop.start();
 						Thread.sleep(250);
-						balloon[balloonIndex + 3].setVisible(false);
+						balloon[index + 3].setVisible(false);
 						soundpop.pause();
-						freeFall = 180;
-						time = 1;				
+						freeFall = 0;				
 						popped=true;
 					} catch (Exception ex) {ex.printStackTrace();}
 				} while (popped == false);
-			
-				balloonX = forBalloon;
-				villainX = forVillain;
 				// firstDrop = false;
 			}
 		}
 	}
+
+	class BlackCollision extends Thread
+	{
+		public void start()
+		{
+			Rectangle wBalloon = new Rectangle(forBalloon, blackFreeFall, 61, 90);
+			Rectangle open = new Rectangle(x + 50, 444, 179, 254);
+			Rectangle close = new Rectangle(x + 50, 535, 179, 184);
+			boolean popped = false;
+								
+			// DID NOT POP
+			if(wBalloon.intersects(close) && player[0].isVisible())
+			{	
+				System.out.println("HIT! \n----------------------------");
+				gameOver = true;
+
+				balloon[5].setBounds(forBalloon, balloon[2].getY(), 61, 90);
+				balloon[2].setVisible(false);
+				balloon[5].setVisible(true);
+				
+				//flag = false;
+
+				sound.stop();
+				soundpop.start();
+				soundcry.start();
+
+				player[0].setVisible(false);
+				player[2].setVisible(true);
+
+				gameOverPanel.setVisible(true);
+				choicePanel.setVisible(true);	
+			}
+
+			// POP
+			else if(wBalloon.intersects(open) && player[1].isVisible())
+			{
+				blackTime = 1;
+
+				balloon[5].setVisible(true);
+				balloon[2].setVisible(false);
+				System.out.println("POPPED! \n----------------------------");
+
+				while (flag == false){ 
+					score += 20;
+					
+					scoreTemp=Integer.toString(score);
+					scoreLabel.setText(scoreTemp);
+
+					if (score > highScore) {
+						highScore = score;
+						highScoreLabel.setText(scoreTemp=Integer.toString(highScore));
+					}
+
+					flag = true;
+				}
+
+				do {
+					try {
+						soundpop.start();
+						Thread.sleep(250);
+						balloon[5].setVisible(false);
+						soundpop.pause();
+
+						blackFreeFall = 180;				
+						popped = true;
+					} catch (Exception ex) {ex.printStackTrace();}
+				} while (popped == false);
+				// firstDrop = false;
+			}
+		}
 	}
+}
